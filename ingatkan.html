@@ -1,0 +1,44 @@
+<!doctypehtml><title>Simple Form</title><style>@keyframes blink{50%{opacity:0}}#responseMessage{display:none;margin-top:10px;font-size:20px}.success{color:green;animation:blink 1s step-start infinite}.error{color:red}#progressContainer{width:100%;background-color:#f3f3f3;margin-top:10px;display:none}#progressBar{width:1%;height:30px;background-color:#00f}</style><div style=font-family:Calibri;font-size:14px;text-align:justify><div style=font-family:Calibri;font-size:10px;text-align:justify>Agar tidak salah persepsi, no wa yang diinput sifatnya untuk permintaan mengingatkan, bukan indent menjadi peserta pelatihan, sehingga bila kedepan menerima Info WA Pelatihan yang dikehendaki, berkenan dapat segera input daftar, agar tidak kehabisan kuota peserta.<p></div><div style=font-family:Calibri;font-size:12px><form id=myForm><label for=whatsapp>No WhatsApp:</label><br><input id=whatsapp name=whatsapp required><br><br><label for=tema>Tema Pelatihan (Singkat):</label><br><input id=tema name=tema required><br><br><label for=jumlah>Rencana Jumlah Peserta:</label><br><input id=jumlah name=jumlah required type=number><br><br><input type=submit value=Submit></form><div id=progressContainer><div id=progressBar></div></div><p id=responseMessage></p><script>document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("myForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                var progressContainer = document.getElementById("progressContainer");
+                var progressBar = document.getElementById("progressBar");
+                progressContainer.style.display = "block";
+                progressBar.style.width = "1%";
+
+                var interval = setInterval(function() {
+                    if (parseInt(progressBar.style.width) >= 100) {
+                        clearInterval(interval);
+                    } else {
+                        progressBar.style.width = parseInt(progressBar.style.width) + 1 + '%';
+                    }
+                }, 100);
+
+                var formData = {
+                    "whatsapp": document.getElementById("whatsapp").value,
+                    "tema": document.getElementById("tema").value,
+                    "jumlah": document.getElementById("jumlah").value
+                };
+
+                fetch("https://script.google.com/macros/s/AKfycbxMILwpARPTDr10vzSrOJhjedaoYbURYO3hZOAmRpduYgMl1hT_NAoAlWVIcQVV_Dm-hA/exec", {
+                    method: "POST",
+                    body: JSON.stringify(formData)
+                }).then(response => response.text())
+                .then(data => {
+                    clearInterval(interval);
+                    var responseMessage = document.getElementById("responseMessage");
+                    responseMessage.textContent = "INPUTAN TELAH KAMI TERIMA!";
+                    responseMessage.className = "success";
+                    responseMessage.style.display = "block";
+                    progressContainer.style.display = "none";
+                }).catch(error => {
+                    clearInterval(interval);
+                    var responseMessage = document.getElementById("responseMessage");
+                    responseMessage.textContent = "Gagal mengirim formulir.";
+                    responseMessage.className = "error";
+                    responseMessage.style.display = "block";
+                    progressContainer.style.display = "none";
+                });
+            });
+        });</script></div>
