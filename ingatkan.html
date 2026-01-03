@@ -1,44 +1,244 @@
-<!doctypehtml><title>Simple Form</title><style>@keyframes blink{50%{opacity:0}}#responseMessage{display:none;margin-top:10px;font-size:20px}.success{color:green;animation:blink 1s step-start infinite}.error{color:red}#progressContainer{width:100%;background-color:#f3f3f3;margin-top:10px;display:none}#progressBar{width:1%;height:30px;background-color:#00f}</style><div style=font-family:Calibri;font-size:12px><form id=myForm><label for=whatsapp>No WhatsApp⤵️:</label><br><input id=whatsapp name=whatsapp required><br><label for=tema>Tema Pelatihan (Singkat)⤵️:</label><br><input id=tema name=tema required><br><label for=jumlah>Rencana Jumlah Peserta⤵️:</label><br><input id=jumlah name=jumlah required type=number><br><br><input type=submit value=Submit></form><div id=progressContainer><div id=progressBar></div></div><p id=responseMessage></p><script>document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("myForm").addEventListener("submit", function(event) {
-                event.preventDefault();
-                
-                var progressContainer = document.getElementById("progressContainer");
-                var progressBar = document.getElementById("progressBar");
-                progressContainer.style.display = "block";
-                progressBar.style.width = "1%";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Pelatihan</title>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      margin: 0;
+      padding: 5px;
+      background-color: transparent;
+    }
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background: #fff;
+      padding: 5px 5px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.58);
+    }
+    .intro {
+      font-size: 13px;
+      margin-bottom: 5px;
+      text-align: center;
+      line-height: 1.0;
+    }
+    .intro1 {
+      font-size: 10px;
+      margin-bottom: 5px;
+      text-align: center;
+      line-height: 0.8;
+    }
 
-                var interval = setInterval(function() {
-                    if (parseInt(progressBar.style.width) >= 100) {
-                        clearInterval(interval);
-                    } else {
-                        progressBar.style.width = parseInt(progressBar.style.width) + 1 + '%';
-                    }
-                }, 100);
 
-                var formData = {
-                    "whatsapp": document.getElementById("whatsapp").value,
-                    "tema": document.getElementById("tema").value,
-                    "jumlah": document.getElementById("jumlah").value
-                };
+    label {
+      font-weight: bold;
+      display: block;
+      font-size: 12px;
+      margin-bottom: 2px;
+      margin-top: 2px;
+    }
+    label[for="temaSelect"] {
+      margin-top: 5px; /* koreksi jarak agar rapi */
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 7px;
+      margin-bottom: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 11px;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 11px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 2px;
+    }
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+    input:focus, select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 2px #007bff66;
+      outline: none;
+    }
+    .select2-container {
+      width: 100% !important;
+      font-size: 11px;
+    }
+    #progressContainer {
+      width: 100%;
+      background-color: #eee;
+      margin-top: 2px;
+      display: none;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    #progressBar {
+      width: 1%;
+      height: 6px;
+      background-color: #00f;
+      transition: width 0.2s ease-in-out;
+    }
+    #responseMessage {
+      display: none;
+      margin-top: 2px;
+      font-size: 13px;
+      text-align: center;
+    }
+    .success { color: green; animation: blink 1s step-start infinite; }
+    .error { color: red; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="intro">
+      <strong>Ingantkan bila Pelatihan sudah ada</strong>
+    </div>
+    <div class="intro1">
+      Pilih tema di daftar / ketik jika tidak ada
+    </div>
 
-                fetch("https://script.google.com/macros/s/AKfycbxMILwpARPTDr10vzSrOJhjedaoYbURYO3hZOAmRpduYgMl1hT_NAoAlWVIcQVV_Dm-hA/exec", {
-                    method: "POST",
-                    body: JSON.stringify(formData)
-                }).then(response => response.text())
-                .then(data => {
-                    clearInterval(interval);
-                    var responseMessage = document.getElementById("responseMessage");
-                    responseMessage.textContent = "INPUTAN TELAH KAMI TERIMA!";
-                    responseMessage.className = "success";
-                    responseMessage.style.display = "block";
-                    progressContainer.style.display = "none";
-                }).catch(error => {
-                    clearInterval(interval);
-                    var responseMessage = document.getElementById("responseMessage");
-                    responseMessage.textContent = "Gagal mengirim formulir.";
-                    responseMessage.className = "error";
-                    responseMessage.style.display = "block";
-                    progressContainer.style.display = "none";
-                });
-            });
-        });</script></div>
+    <form id="myForm">
+      <label for="temaSelect">Tema Pelatihan:</label>
+      <select id="temaSelect" required>
+        <option value="">-- Pilih Tema --</option>
+        <option>PJJ Penyegaran Dir-Kom</option>
+        <option>PTM Sertifikasi Direktur</option>
+        <option>PTM Sertifikasi Komisaris</option>
+        <option>PTM Sertifikasi PE Audit Intern</option>
+        <option>PTM Sertifikasi PE Bisnis & Operasional</option>
+        <option>PTM Sertifikasi PE Kepatuhan & Pemantau Risiko</option>
+        <option>PTM Sertifikasi Supervisor Audit Intern</option>
+        <option>PTM Sertifikasi Supervisor Kredit</option>
+        <option>PTM Sertifikasi Supervisor Operasional</option>
+        <option>PTM Sertifikasi Pelaksana Akuntasi & Pelaporan</option>
+        <option>PTM Sertifikasi Pelaksana Kredit</option>
+        <option>PTM Sertifikasi Pelaksana Layanan</option>
+<option>Creva-KPI</option>
+<option>Creva-RBA</option>
+<option>Creva-SI-INSAF</option>
+<option>Creva-SI-PIPKu</option>
+<option>Creva-SIMR</option>
+<option>Creva-SIP-SDM</option>
+<option>Creva-SIP-TAKOL</option>
+<option>Creva-SIP-WEB</option>
+<option>Creva-SIP2RBB</option>
+<option>Creva-SIPAKOM</option>
+<option>Creva-SIPAPUPPT</option>
+<option>Creva-SIPCKPN</option>
+<option>Creva-SIPEKAP</option>
+<option>Creva-SIPORTAL</option>
+<option>Creva-SIPPATUH</option>
+<option>Creva-SIPPENA</option>
+<option>Creva-SIPRO</option>
+<option>Creva-SIPTKS</option>
+<option>Creva-SI-RAKB</option>
+<option>Creva-SIRENBIS</option>
+<option>Creva-SILANJUT</option>
+<option>Creva-SIPETA</option>
+<option>Creva-SIAP-TKS</option>
+
+        <option>Zipro-Audit Berbasis Risiko</option>
+        <option>Zipro-Pembekalan Fit n Propper Test</option>
+        <option>Zipro-Penerapan Strategi Anti Fraud</option>
+        <option>Zipro-Perlindungan Konsumen</option>
+        <option>SIPELAKU</option>
+        <option>Kredit sindikasi</option>
+        <option>Penyelesaian Kredit Bermasalah</option>
+
+      </select>
+
+      <label for="jumlah">Rencana Jumlah Peserta:</label>
+      <input id="jumlah" name="jumlah" type="number" required />
+
+      <label for="whatsapp">No WhatsApp:</label>
+      <input id="whatsapp" name="whatsapp" type="text" required />
+
+      <input type="submit" value="Submit" />
+    </form>
+
+    <div id="progressContainer"><div id="progressBar"></div></div>
+    <p id="responseMessage"></p>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    $(function () {
+      $('#temaSelect').select2({
+        placeholder: "Pilih atau ketik tema...",
+        allowClear: true,
+        tags: true
+      });
+    });
+
+    document.getElementById("myForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const temaFinal = $('#temaSelect').val();
+      const whatsapp = document.getElementById("whatsapp").value.trim();
+      const jumlah = document.getElementById("jumlah").value;
+
+      if (!temaFinal || temaFinal.trim().length < 4) {
+        alert("Silakan masukkan tema pelatihan yang valid (minimal 4 karakter).");
+        return;
+      }
+
+      const formData = { whatsapp, tema: temaFinal, jumlah };
+
+      const progressContainer = document.getElementById("progressContainer");
+      const progressBar = document.getElementById("progressBar");
+      const responseMessage = document.getElementById("responseMessage");
+
+      progressContainer.style.display = "block";
+      progressBar.style.width = "1%";
+
+      let width = 1;
+      const interval = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(interval);
+        } else {
+          width++;
+          progressBar.style.width = width + "%";
+        }
+      }, 100);
+
+      fetch("https://script.google.com/macros/s/AKfycbxMILwpARPTDr10vzSrOJhjedaoYbURYO3hZOAmRpduYgMl1hT_NAoAlWVIcQVV_Dm-hA/exec", {
+        method: "POST",
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.text())
+      .then(data => {
+        clearInterval(interval);
+        responseMessage.textContent = "INPUTAN TELAH KAMI TERIMA!";
+        responseMessage.className = "success";
+        responseMessage.style.display = "block";
+        progressContainer.style.display = "none";
+      })
+      .catch(error => {
+        clearInterval(interval);
+        responseMessage.textContent = "Gagal mengirim formulir.";
+        responseMessage.className = "error";
+        responseMessage.style.display = "block";
+        progressContainer.style.display = "none";
+      });
+    });
+  </script>
+</body>
+</html>
